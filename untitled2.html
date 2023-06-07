@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Password Validation</title>
+  <link rel="stylesheet" href="https://use.typekit.net/qzp0hvy.css">
+  <style>
+    body {
+      background-color: #000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      color: red;
+      align-items: center;
+      height: 100vh;
+      
+font-family: "dico-typewriter", mono;
+font-weight: 400;
+font-style: normal;
+}
+
+    .countdown {
+      font-size: 200px;
+      font-color: #ffffff;
+      margin-bottom: 20px;
+    }
+
+    .password-input {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .password-input input {
+      width: 60px;
+      height: 60px;
+      text-align: center;
+      border: none;
+      border-bottom: 2px solid black;
+      font-size: 40px;
+      margin: 0 5px;
+      outline: none;
+    }
+
+    .alert-message {
+      color: red;
+      font-size: 40px;
+      text-align: center;
+      display: none;
+      margin-top: 10px;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+  <script>
+
+
+    var countdownInterval;
+    var secondsRemaining = 3600; // 1 hour in seconds
+    var alertTimeout;
+
+    function updateCountdown() {
+      var hours = Math.floor(secondsRemaining / 3600);
+      var minutes = Math.floor((secondsRemaining % 3600) / 60);
+      var seconds = secondsRemaining % 60;
+
+      var countdownElement = document.getElementById('countdown');
+      countdownElement.textContent = hours.toString().padStart(2, '0') + ':' +
+        minutes.toString().padStart(2, '0') + ':' +
+        seconds.toString().padStart(2, '0');
+
+      if (secondsRemaining === 0) {
+        stopCountdown();
+      } else {
+        secondsRemaining--;
+      }
+    }
+
+    function startCountdown() {
+      countdownInterval = setInterval(updateCountdown, 1000);
+    }
+
+    function stopCountdown() {
+      clearInterval(countdownInterval);
+    }
+
+    function validatePassword() {
+      var inputFields = document.getElementsByClassName('password-input')[0].getElementsByTagName('input');
+      var password = '';
+      for (var i = 0; i < inputFields.length; i++) {
+        password += inputFields[i].value;
+      }
+
+      // Check if the password is correct (8 letters)
+      if (password === 'superbia') { // Replace 'password' with your actual password
+        // Password is correct, stop the countdown
+        stopCountdown();
+      } else {
+        // Password is incorrect, display the alert message
+        var alertMessage = document.getElementById('alert-message');
+        alertMessage.style.display = 'block';
+
+        // Clear the password fields and refocus the first field
+        for (var i = 0; i < inputFields.length; i++) {
+          inputFields[i].value = '';
+        }
+        inputFields[0].focus();
+
+        // Hide the alert message after 2 seconds
+        clearTimeout(alertTimeout);
+        alertTimeout = setTimeout(function() {
+          alertMessage.style.display = 'none';
+        }, 2000);
+      }
+    }
+
+    function handleInputChange(event, index) {
+      var inputFields = document.getElementsByClassName('password-input')[0].getElementsByTagName('input');
+      var currentInput = inputFields[index];
+
+      if (event.target.value !== '') {
+        if (index < inputFields.length - 1) {
+          inputFields[index + 1].focus();
+        } else {
+          validatePassword();
+        }
+      } else if (event.key === 'Backspace') {
+        currentInput.value = '';
+        if (index > 0) {
+          inputFields[index - 1].focus();
+        }
+      }
+    }
+
+    function handleFormSubmit(event) {
+      event.preventDefault();
+      validatePassword();
+    }
+
+    // Start the countdown on page load
+    window.onload = function() {
+      updateCountdown();
+      startCountdown();
+    };
+  </script>
+</head>
+<body>
+  <div class="countdown" id="countdown"></div>
+  <form onsubmit="handleFormSubmit(event)">
+    <div class="password-input">
+      <input type="text" maxlength="1" autofocus oninput="handleInputChange(event, 0)">
+      <input type="text" maxlength="1" oninput="handleInputChange(event, 1)">
+      <input type="text" maxlength="1" oninput="handleInputChange(event, 2)">
+      <input type="text" maxlength="1" oninput="handleInputChange(event, 3)">
+      <input type="text" maxlength="1" oninput="handleInputChange(event, 4)">
+      <input type="text" maxlength="1" oninput="handleInputChange(event, 5)">
+      <input type="text" maxlength="1" oninput="handleInputChange(event, 6)">
+      <input type="text" maxlength="1" oninput="handleInputChange(event, 7)">
+    </div>
+    <p id="alert-message" class="alert-message">FAIL</p>
+    <button class="hidden" type="submit">Submit</button>
+  </form>
+</body>
+</html>
